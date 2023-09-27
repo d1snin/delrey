@@ -30,26 +30,20 @@ jobs:
         with:
           arguments: build
 
-      - name: Upload Bundle Artifact
+      - name: Upload Master Artifact
         uses: actions/upload-artifact@v3.0.0
         with:
-          name: beam-bundle
-          path: "./beam-bundle/build/libs"
-
-      - name: Upload Client Artifact
-        uses: actions/upload-artifact@v3.0.0
-        with:
-          name: beam-client
-          path: "./beam-client/build/libs"
+          name: delrey-master
+          path: "./delrey-master/build/libs"
 
       - name: Upload Daemon Artifact
         uses: actions/upload-artifact@v3.0.0
         with:
-          name: beam-daemon
-          path: "./beam-daemon/build/libs"
+          name: delrey-daemon
+          path: "./delrey-daemon/build/libs"
 
-      - name: Upload UI Artifact
+      - name: Upload Client Library Artifact
         uses: actions/upload-artifact@v3.0.0
         with:
-          name: beam-ui
-          path: "./beam-ui/build/dist"
+          name: delrey-client
+          path: "./delrey-client/build/libs"
