@@ -14,8 +14,17 @@
  * limitations under the License.
  */
 
-package dev.d1s.delrey.master
+package dev.d1s.delrey.master.configuration
 
-fun main() {
-    DelreyMasterApplication.launch()
+import dev.d1s.exkt.ktor.server.koin.configuration.ApplicationConfigurer
+import io.ktor.server.application.*
+import io.ktor.server.config.*
+import org.koin.core.module.Module
+
+object Services : ApplicationConfigurer {
+
+    override fun Application.configure(module: Module, config: ApplicationConfig) {
+        module.apply {
+        }
+    }
 }

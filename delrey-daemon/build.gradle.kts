@@ -31,6 +31,8 @@ dependencies {
     val logbackVersion: String by project
     val kmLogVersion: String by project
 
+    val turtleVersion: String by project
+
     val hopliteVersion: String by project
 
     val koinVersion: String by project
@@ -41,6 +43,8 @@ dependencies {
 
     implementation("ch.qos.logback:logback-classic:$logbackVersion")
     implementation("org.lighthousegames:logging:$kmLogVersion")
+
+    implementation("com.lordcodes.turtle:turtle:$turtleVersion")
 
     implementation("com.sksamuel.hoplite:hoplite-core:$hopliteVersion")
 

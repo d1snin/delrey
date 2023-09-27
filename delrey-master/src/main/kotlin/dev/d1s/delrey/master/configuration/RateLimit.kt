@@ -14,8 +14,22 @@
  * limitations under the License.
  */
 
-package dev.d1s.delrey.master
+package dev.d1s.delrey.master.configuration
 
-fun main() {
-    DelreyMasterApplication.launch()
+import dev.d1s.exkt.ktor.server.koin.configuration.ApplicationConfigurer
+import io.ktor.server.application.*
+import io.ktor.server.config.*
+import io.ktor.server.plugins.ratelimit.RateLimit
+import org.koin.core.module.Module
+import kotlin.time.Duration.Companion.seconds
+
+object RateLimit : ApplicationConfigurer {
+
+    override fun Application.configure(module: Module, config: ApplicationConfig) {
+        install(RateLimit) {
+            register {
+                rateLimiter(limit = 7, refillPeriod = 10.seconds)
+            }
+        }
+    }
 }
