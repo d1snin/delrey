@@ -1,0 +1,13 @@
+version: "3.8"
+
+services:
+  delrey-master:
+    image: delrey-master:latest
+    container_name: delrey-master
+    expose:
+      - "8070"
+    ports:
+      - "8070:8070"
+    env_file:
+      - "../.env"
+    restart: on-failure
