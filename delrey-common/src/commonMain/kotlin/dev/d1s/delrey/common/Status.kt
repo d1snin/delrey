@@ -18,29 +18,12 @@ package dev.d1s.delrey.common
 
 import kotlinx.serialization.Serializable
 
-public typealias RunId = String
-
-public typealias Pid = Long
-public typealias ExitCode = Int
-public typealias Output = String
-
-public interface AbstractRun
-
 @Serializable
-public data class Run(
-    val id: RunId,
-    val command: Command,
-    val pid: Pid?,
-    val status: ExitCode?,
-    val output: Output?
-) : AbstractRun
-
-@Serializable
-public data class ModifiedRun(
-    val command: Command
-) : AbstractRun
-
-@Serializable
-public data class AcceptedRun(
-    val id: RunId
-) : AbstractRun
+public data class Status(
+    val version: Version,
+    val state: State
+) {
+    public enum class State {
+        UP, DOWN
+    }
+}

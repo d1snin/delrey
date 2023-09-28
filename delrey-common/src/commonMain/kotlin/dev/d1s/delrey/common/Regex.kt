@@ -16,31 +16,9 @@
 
 package dev.d1s.delrey.common
 
-import kotlinx.serialization.Serializable
+import kotlin.text.Regex
 
-public typealias RunId = String
+public object Regex {
 
-public typealias Pid = Long
-public typealias ExitCode = Int
-public typealias Output = String
-
-public interface AbstractRun
-
-@Serializable
-public data class Run(
-    val id: RunId,
-    val command: Command,
-    val pid: Pid?,
-    val status: ExitCode?,
-    val output: Output?
-) : AbstractRun
-
-@Serializable
-public data class ModifiedRun(
-    val command: Command
-) : AbstractRun
-
-@Serializable
-public data class AcceptedRun(
-    val id: RunId
-) : AbstractRun
+    public val Alias: Regex = Regex("([a-z0-9]{1,20})(-[a-z0-9]{0,20}){0,10}")
+}

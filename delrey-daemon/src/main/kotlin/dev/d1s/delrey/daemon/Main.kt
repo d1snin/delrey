@@ -17,5 +17,4 @@
 package dev.d1s.delrey.daemon
 
 fun main() {
-
 }

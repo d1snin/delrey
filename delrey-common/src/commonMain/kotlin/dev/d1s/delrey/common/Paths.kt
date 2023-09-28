@@ -16,31 +16,13 @@
 
 package dev.d1s.delrey.common
 
-import kotlinx.serialization.Serializable
+public object Paths {
 
-public typealias RunId = String
+    public const val ID_PARAMETER: String = "id"
 
-public typealias Pid = Long
-public typealias ExitCode = Int
-public typealias Output = String
+    public const val GET_STATUS_ROUTE: String = "/status"
 
-public interface AbstractRun
-
-@Serializable
-public data class Run(
-    val id: RunId,
-    val command: Command,
-    val pid: Pid?,
-    val status: ExitCode?,
-    val output: Output?
-) : AbstractRun
-
-@Serializable
-public data class ModifiedRun(
-    val command: Command
-) : AbstractRun
-
-@Serializable
-public data class AcceptedRun(
-    val id: RunId
-) : AbstractRun
+    public const val POST_RUN: String = "/runs"
+    public const val GET_RUN: String = "/runs/{$ID_PARAMETER}"
+    public const val DELETE_RUN: String = "/runs/{$ID_PARAMETER}"
+}

@@ -16,31 +16,10 @@
 
 package dev.d1s.delrey.common
 
-import kotlinx.serialization.Serializable
+public typealias Version = String
 
-public typealias RunId = String
+public const val VERSION_MAJOR: Int = 0
+public const val VERSION_MINOR: Int = 0
+public const val VERSION_PATCH: Int = 1
 
-public typealias Pid = Long
-public typealias ExitCode = Int
-public typealias Output = String
-
-public interface AbstractRun
-
-@Serializable
-public data class Run(
-    val id: RunId,
-    val command: Command,
-    val pid: Pid?,
-    val status: ExitCode?,
-    val output: Output?
-) : AbstractRun
-
-@Serializable
-public data class ModifiedRun(
-    val command: Command
-) : AbstractRun
-
-@Serializable
-public data class AcceptedRun(
-    val id: RunId
-) : AbstractRun
+public const val VERSION: Version = "$VERSION_MAJOR.$VERSION_MINOR.$VERSION_PATCH"
