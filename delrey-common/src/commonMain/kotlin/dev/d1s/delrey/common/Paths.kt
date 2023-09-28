@@ -25,4 +25,6 @@ public object Paths {
     public const val POST_RUN: String = "/runs"
     public const val GET_RUN: String = "/runs/{$ID_PARAMETER}"
     public const val DELETE_RUN: String = "/runs/{$ID_PARAMETER}"
+
+    public const val SESSION: String = "/session"
 }
