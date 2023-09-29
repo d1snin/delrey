@@ -24,23 +24,42 @@ public typealias Pid = Long
 public typealias ExitCode = Int
 public typealias Output = String
 
-public interface AbstractRun
+public interface AbstractRun {
+
+    public val command: Command
+
+    public val host: HostAlias
+}
+
+public interface PhysicalRun {
+
+    public val pid: Pid?
+
+    public val status: ExitCode?
+
+    public val output: Output?
+}
 
 @Serializable
 public data class Run(
     val id: RunId,
-    val command: Command,
-    val pid: Pid?,
-    val status: ExitCode?,
-    val output: Output?
+    override val command: Command,
+    override val host: HostAlias,
+    override val pid: Pid?,
+    override val status: ExitCode?,
+    override val output: Output?
+) : AbstractRun, PhysicalRun
+
+@Serializable
+public data class RunModification(
+    override val command: Command,
+    override val host: HostAlias
 ) : AbstractRun
 
 @Serializable
-public data class ModifiedRun(
-    val command: Command
-) : AbstractRun
-
-@Serializable
-public data class AcceptedRun(
-    val id: RunId
-) : AbstractRun
+public data class PhysicalRunModification(
+    val id: RunId,
+    override val pid: Pid?,
+    override val status: ExitCode?,
+    override val output: Output?
+) : PhysicalRun

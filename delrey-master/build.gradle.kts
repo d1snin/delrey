@@ -33,6 +33,7 @@ dependencies {
 
     val ktorVersion: String by project
     val ktorWsEventsVersion: String by project
+    val ktorStaticAuthenticationVersion: String by project
 
     val logbackVersion: String by project
     val kmLogVersion: String by project
@@ -58,6 +59,7 @@ dependencies {
     implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
     implementation("dev.d1s.exkt:exkt-ktor-server:$exktVersion")
     implementation("dev.d1s.ktor-ws-events:ktor-ws-events-server:$ktorWsEventsVersion")
+    implementation("dev.d1s:ktor-static-authentication:$ktorStaticAuthenticationVersion")
 
     implementation("ch.qos.logback:logback-classic:$logbackVersion")
     implementation("org.lighthousegames:logging:$kmLogVersion")

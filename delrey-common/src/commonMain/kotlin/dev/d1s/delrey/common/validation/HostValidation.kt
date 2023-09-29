@@ -14,15 +14,13 @@
  * limitations under the License.
  */
 
-package dev.d1s.delrey.common
+package dev.d1s.delrey.common.validation
 
-import io.ktor.websocket.*
+import dev.d1s.delrey.common.HostAlias
+import dev.d1s.delrey.common.Regex
+import dev.d1s.exkt.konform.matches
+import io.konform.validation.Validation
 
-public typealias Hosts = List<Host>
-
-public typealias HostAlias = String
-
-public data class Host(
-    val alias: HostAlias,
-    val session: WebSocketSession
-)
+public val validateHostAlias: Validation<HostAlias> = Validation {
+    matches(Regex.Alias) hint "host alias must match ${Regex.Alias}"
+}

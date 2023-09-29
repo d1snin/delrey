@@ -14,15 +14,25 @@
  * limitations under the License.
  */
 
-package dev.d1s.delrey.common
+package dev.d1s.delrey.master.route
 
-import io.ktor.websocket.*
+import dev.d1s.delrey.common.Paths
+import dev.d1s.delrey.master.service.HostService
+import dev.d1s.exkt.ktor.server.koin.configuration.Route
+import io.ktor.server.routing.*
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
+import org.koin.core.qualifier.named
 
-public typealias Hosts = List<Host>
+class GetStatusRoute : Route, KoinComponent {
 
-public typealias HostAlias = String
+    override val qualifier = named("get-status-route")
 
-public data class Host(
-    val alias: HostAlias,
-    val session: WebSocketSession
-)
+    private val hostService by inject<HostService>()
+
+    override fun Routing.apply() {
+        get(Paths.GET_STATUS_ROUTE) {
+            // TODO
+        }
+    }
+}

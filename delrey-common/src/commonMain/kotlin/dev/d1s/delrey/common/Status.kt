@@ -21,7 +21,8 @@ import kotlinx.serialization.Serializable
 @Serializable
 public data class Status(
     val version: Version,
-    val state: State
+    val state: State,
+    val hosts: List<HostAlias>
 ) {
     public enum class State {
         UP, DOWN

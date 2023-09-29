@@ -14,15 +14,22 @@
  * limitations under the License.
  */
 
-package dev.d1s.delrey.common
+package dev.d1s.delrey.master.route
 
-import io.ktor.websocket.*
+import dev.d1s.delrey.common.Paths
+import dev.d1s.exkt.ktor.server.koin.configuration.Route
+import io.ktor.server.routing.*
+import io.ktor.server.websocket.*
+import org.koin.core.component.KoinComponent
+import org.koin.core.qualifier.named
 
-public typealias Hosts = List<Host>
+class SessionRoute : Route, KoinComponent {
 
-public typealias HostAlias = String
+    override val qualifier = named("session-route")
 
-public data class Host(
-    val alias: HostAlias,
-    val session: WebSocketSession
-)
+    override fun Routing.apply() {
+        webSocket(Paths.SESSION) {
+            // TODO
+        }
+    }
+}

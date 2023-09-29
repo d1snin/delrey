@@ -16,15 +16,22 @@
 
 package dev.d1s.delrey.master.configuration
 
+import dev.d1s.delrey.master.repository.DefaultHostRepository
+import dev.d1s.delrey.master.repository.DefaultRunRepository
+import dev.d1s.delrey.master.repository.HostRepository
+import dev.d1s.delrey.master.repository.RunRepository
 import dev.d1s.exkt.ktor.server.koin.configuration.ApplicationConfigurer
 import io.ktor.server.application.*
 import io.ktor.server.config.*
 import org.koin.core.module.Module
+import org.koin.core.module.dsl.singleOf
 
 object Repositories : ApplicationConfigurer {
 
     override fun Application.configure(module: Module, config: ApplicationConfig) {
         module.apply {
+            singleOf<HostRepository>(::DefaultHostRepository)
+            singleOf<RunRepository>(::DefaultRunRepository)
         }
     }
 }

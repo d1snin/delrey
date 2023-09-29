@@ -16,15 +16,22 @@
 
 package dev.d1s.delrey.master.configuration
 
+import dev.d1s.delrey.master.service.HostService
+import dev.d1s.delrey.master.service.DefaultHostService
+import dev.d1s.delrey.master.service.RunService
+import dev.d1s.delrey.master.service.DefaultRunService
 import dev.d1s.exkt.ktor.server.koin.configuration.ApplicationConfigurer
 import io.ktor.server.application.*
 import io.ktor.server.config.*
 import org.koin.core.module.Module
+import org.koin.core.module.dsl.singleOf
 
 object Services : ApplicationConfigurer {
 
     override fun Application.configure(module: Module, config: ApplicationConfig) {
         module.apply {
+            singleOf<HostService>(::DefaultHostService)
+            singleOf<RunService>(::DefaultRunService)
         }
     }
 }
