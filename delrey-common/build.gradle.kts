@@ -50,17 +50,15 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
+                val ktorVersion: String by project
+
                 val kotlinxSerializationVersion: String by project
-
-                val kotlinxDatetimeVersion: String by project
-
-                val ktorWsEventsVersion: String by project
 
                 val exktVersion: String by project
 
-                implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinxSerializationVersion")
+                implementation("io.ktor:ktor-websockets:$ktorVersion")
 
-                api("dev.d1s.ktor-ws-events:ktor-ws-events-client:$ktorWsEventsVersion")
+                implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinxSerializationVersion")
 
                 implementation("dev.d1s.exkt:exkt-konform:$exktVersion")
             }

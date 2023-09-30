@@ -19,6 +19,8 @@ package dev.d1s.delrey.master.route
 import dev.d1s.delrey.common.Paths
 import dev.d1s.delrey.master.service.HostService
 import dev.d1s.exkt.ktor.server.koin.configuration.Route
+import io.ktor.server.application.*
+import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
@@ -32,7 +34,9 @@ class GetStatusRoute : Route, KoinComponent {
 
     override fun Routing.apply() {
         get(Paths.GET_STATUS_ROUTE) {
-            // TODO
+            val status = hostService.getStatus().getOrThrow()
+
+            call.respond(status)
         }
     }
 }

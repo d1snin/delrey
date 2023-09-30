@@ -23,20 +23,16 @@ import io.konform.validation.Validation
 
 public val validateRun: Validation<RunModification> = Validation {
     RunModification::command {
-        run(validateCommand)
+        Command::name {
+            isNotBlank() hint "command name must not be blank"
+        }
+
+        Command::arguments onEach {
+            isNotBlank() hint "command argument must not be blank"
+        }
     }
 
     RunModification::host {
-        run(validateHostAlias)
-    }
-}
-
-private val validateCommand: Validation<Command> = Validation {
-    Command::name {
-        isNotBlank() hint "command name must not be blank"
-    }
-
-    Command::arguments onEach {
-        isNotBlank() hint "command argument must not be blank"
+        requireAliasMatch()
     }
 }

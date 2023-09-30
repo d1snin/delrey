@@ -17,19 +17,35 @@
 package dev.d1s.delrey.master.route
 
 import dev.d1s.delrey.common.Paths
+import dev.d1s.delrey.common.RunModification
+import dev.d1s.delrey.common.validation.validateRun
+import dev.d1s.delrey.master.service.RunService
 import dev.d1s.exkt.ktor.server.koin.configuration.Route
+import io.ktor.http.*
+import io.ktor.server.application.*
 import io.ktor.server.auth.*
+import io.ktor.server.request.*
+import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 import org.koin.core.qualifier.named
 
 class PostRunRoute : Route, KoinComponent {
 
     override val qualifier = named("post-run-route")
 
+    private val runService by inject<RunService>()
+
     override fun Routing.apply() {
         authenticate {
             post(Paths.POST_RUN) {
+                val body = call.receive<RunModification>()
+                validateRun(body)
+
+                val run = runService.launch(body).getOrThrow()
+
+                call.respond(HttpStatusCode.Accepted, run)
             }
         }
     }

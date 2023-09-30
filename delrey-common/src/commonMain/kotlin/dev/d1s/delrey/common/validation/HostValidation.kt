@@ -16,11 +16,20 @@
 
 package dev.d1s.delrey.common.validation
 
+import dev.d1s.delrey.common.Host
 import dev.d1s.delrey.common.HostAlias
 import dev.d1s.delrey.common.Regex
-import dev.d1s.exkt.konform.matches
+import io.konform.validation.Constraint
 import io.konform.validation.Validation
+import io.konform.validation.ValidationBuilder
 
-public val validateHostAlias: Validation<HostAlias> = Validation {
-    matches(Regex.Alias) hint "host alias must match ${Regex.Alias}"
+public val validateHost: Validation<Host> = Validation {
+    Host::alias {
+        requireAliasMatch()
+    }
 }
+
+internal fun ValidationBuilder<HostAlias>.requireAliasMatch(): Constraint<HostAlias> =
+    addConstraint("host alias must match ${Regex.Alias}") {
+        it.matches(Regex.Alias)
+    }

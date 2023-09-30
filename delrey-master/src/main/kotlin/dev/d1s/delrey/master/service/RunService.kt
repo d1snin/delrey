@@ -20,34 +20,87 @@ import dev.d1s.delrey.common.PhysicalRunModification
 import dev.d1s.delrey.common.Run
 import dev.d1s.delrey.common.RunId
 import dev.d1s.delrey.common.RunModification
+import dev.d1s.delrey.master.repository.RunRepository
+import io.ktor.server.plugins.*
+import io.ktor.server.websocket.*
 import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
+import org.lighthousegames.logging.logging
+import java.util.*
 
 interface RunService {
 
-    fun launch(modification: RunModification): Run
+    suspend fun launch(modification: RunModification): Result<Run>
 
-    fun getRun(runId: RunId): Run?
+    fun getRun(runId: RunId): Result<Run>
 
-    fun updateRun(physicalModification: PhysicalRunModification): Run?
-
-    fun cancel(runId: RunId)
+    fun updateRun(physicalModification: PhysicalRunModification): Result<Run>
 }
 
 class DefaultRunService : RunService, KoinComponent {
 
-    override fun launch(modification: RunModification): Run {
-        TODO("Not yet implemented")
-    }
+    private val runRepository by inject<RunRepository>()
 
-    override fun getRun(runId: RunId): Run? {
-        TODO("Not yet implemented")
-    }
+    private val hostService by inject<HostService>()
 
-    override fun updateRun(physicalModification: PhysicalRunModification): Run? {
-        TODO("Not yet implemented")
-    }
+    private val randomId get() = UUID.randomUUID().toString()
 
-    override fun cancel(runId: RunId) {
-        TODO("Not yet implemented")
-    }
+    private val log = logging()
+
+    override suspend fun launch(modification: RunModification): Result<Run> =
+        runCatching {
+            log.d {
+                "Launching run: $modification"
+            }
+
+            val (command, hostAlias) = modification
+            val host = hostService.getHost(hostAlias).getOrThrow()
+
+
+            val run = Run(
+                id = randomId,
+                command = command,
+                host = hostAlias,
+                pid = null,
+                status = null,
+                output = null
+            )
+
+            runRepository.add(run)
+
+            val serverSession = (host.session as WebSocketServerSession)
+            serverSession.sendSerialized(run)
+
+            run
+        }
+
+    override fun getRun(runId: RunId): Result<Run> =
+        runCatching {
+            runRepository.findById(runId)
+                ?: throw NotFoundException("Run not found by id '$runId'")
+        }
+
+    override fun updateRun(physicalModification: PhysicalRunModification): Result<Run> =
+        runCatching {
+            val runId = physicalModification.id
+
+            log.d {
+                "Updating run with id '$runId'"
+            }
+
+            val run = getRun(runId).getOrThrow()
+
+            val newRun = Run(
+                runId,
+                run.command,
+                run.host,
+                physicalModification.pid,
+                physicalModification.status,
+                physicalModification.output
+            )
+
+            runRepository.updateById(runId, newRun)
+
+            newRun
+        }
 }

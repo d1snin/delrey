@@ -16,20 +16,57 @@
 
 package dev.d1s.delrey.master.route
 
+import dev.d1s.delrey.common.Host
 import dev.d1s.delrey.common.Paths
+import dev.d1s.delrey.common.PhysicalRunModification
+import dev.d1s.delrey.master.service.HostService
+import dev.d1s.delrey.master.service.RunService
+import dev.d1s.delrey.master.util.requiredWhoamiQueryParameter
 import dev.d1s.exkt.ktor.server.koin.configuration.Route
 import io.ktor.server.routing.*
 import io.ktor.server.websocket.*
 import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 import org.koin.core.qualifier.named
+import org.lighthousegames.logging.logging
 
 class SessionRoute : Route, KoinComponent {
 
     override val qualifier = named("session-route")
 
+    private val hostService by inject<HostService>()
+
+    private val runService by inject<RunService>()
+
+    private val log = logging()
+
     override fun Routing.apply() {
         webSocket(Paths.SESSION) {
-            // TODO
+            val hostAlias = call.requiredWhoamiQueryParameter
+
+            log.d {
+                "Handling client session. Who: $hostAlias"
+            }
+
+            val host = Host(hostAlias, session = this)
+
+            hostService.addHost(host).getOrThrow()
+
+            while (true) {
+                val modification = try {
+                    receiveDeserialized<PhysicalRunModification>()
+                } catch (e: Throwable) {
+                    log.w {
+                        "Failed to receive physical modification. See you soon, $hostAlias."
+                    }
+
+                    hostService.removeHost(hostAlias).getOrThrow()
+
+                    throw e
+                }
+
+                runService.updateRun(modification).getOrThrow()
+            }
         }
     }
 }

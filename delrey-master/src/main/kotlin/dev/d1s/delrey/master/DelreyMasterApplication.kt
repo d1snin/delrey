@@ -38,7 +38,7 @@ object DelreyMasterApplication : ServerApplication(), KoinComponent {
         Services,
         Repositories,
         Routing,
-        WebSocketEvents,
+        Ws,
         Cors,
         RateLimit,
         StatusPages,

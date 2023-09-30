@@ -20,11 +20,12 @@ public object Paths {
 
     public const val ID_PARAMETER: String = "id"
 
+    public const val WHOAMI_QUERY_PARAMETER: String = "whoami"
+
     public const val GET_STATUS_ROUTE: String = "/status"
 
     public const val POST_RUN: String = "/runs"
     public const val GET_RUN: String = "/runs/{$ID_PARAMETER}"
-    public const val DELETE_RUN: String = "/runs/{$ID_PARAMETER}"
 
     public const val SESSION: String = "/session"
 }

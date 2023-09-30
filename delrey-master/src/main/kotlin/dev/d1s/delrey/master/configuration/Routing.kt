@@ -31,7 +31,6 @@ object Routing : ApplicationConfigurer {
 
             +PostRunRoute()
             +GetRunRoute()
-            +DeleteRunRoute()
 
             +SessionRoute()
         }

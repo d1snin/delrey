@@ -1,1 +1,25 @@
 # Delrey Master
+
+### Session
+WEBSOCKET ws://192.168.0.200:8070/session?whoami=test
+
+### GET Status
+GET http://192.168.0.200:8070/status
+
+### GET Run
+GET http://192.168.0.200:8070/runs/0cfd6b22-0272-4c95-b67b-900e73b99577
+Content-Type: application/json
+Authorization: {{token}}
+
+### POST Run
+POST http://192.168.0.200:8070/runs
+Content-Type: application/json
+Authorization: {{token}}
+
+{
+    "command": {
+        "name": "whoami",
+        "arguments": []
+    },
+    "host": "test"
+}

@@ -52,8 +52,6 @@ kotlin {
             dependencies {
                 val ktorVersion: String by project
 
-                val ktorWsEventsVersion: String by project
-
                 val exktVersion: String by project
 
                 val kotlinxCoroutinesVersion: String by project
@@ -63,8 +61,6 @@ kotlin {
                 api("io.ktor:ktor-client-core:$ktorVersion")
                 implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
                 implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
-
-                api("dev.d1s.ktor-ws-events:ktor-ws-events-client:$ktorWsEventsVersion")
 
                 implementation("dev.d1s.exkt:exkt-common:$exktVersion")
 

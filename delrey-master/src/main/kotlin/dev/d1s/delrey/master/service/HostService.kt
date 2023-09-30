@@ -20,59 +20,83 @@ import dev.d1s.delrey.common.Host
 import dev.d1s.delrey.common.HostAlias
 import dev.d1s.delrey.common.Status
 import dev.d1s.delrey.common.VERSION
-import dev.d1s.delrey.common.validation.validateHostAlias
+import dev.d1s.delrey.common.validation.validateHost
 import dev.d1s.delrey.master.repository.HostRepository
 import dev.d1s.exkt.ktor.server.statuspages.HttpStatusException
 import io.ktor.http.*
+import io.ktor.server.plugins.*
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
+import org.lighthousegames.logging.logging
 
 interface HostService {
 
-    fun addHost(host: Host)
+    fun addHost(host: Host): Result<Unit>
 
-    fun getHost(alias: HostAlias): Host?
+    fun getHost(alias: HostAlias): Result<Host>
 
-    fun getStatus(): Status
+    fun getStatus(): Result<Status>
 
-    fun removeHost(alias: HostAlias): Boolean
+    fun removeHost(alias: HostAlias): Result<Host>
 }
 
 class DefaultHostService : HostService, KoinComponent {
 
     private val hostRepository by inject<HostRepository>()
 
-    override fun addHost(host: Host) {
-        val alias = host.alias
+    private val log = logging()
 
-        validateHostAlias(alias)
+    override fun addHost(host: Host): Result<Unit> =
+        runCatching {
+            val alias = host.alias
 
-        val existingHost = hostRepository.findByAlias(alias)
-        existingHost?.let {
-            throw HttpStatusException(
-                HttpStatusCode.Conflict,
-                "Host with the same alias already registered"
+            log.d {
+                "Registering host aliased as '$alias'..."
+            }
+
+            validateHost(host)
+
+            val existingHost = hostRepository.findByAlias(alias)
+            existingHost?.let {
+                throw HttpStatusException(
+                    HttpStatusCode.Conflict,
+                    "Host with the same alias already registered"
+                )
+            }
+
+            hostRepository.add(host)
+        }
+
+    override fun getHost(alias: HostAlias): Result<Host> =
+        runCatching {
+            hostRepository.findByAlias(alias)
+                ?: throw NotFoundException("Host aliased as '$alias' is not registered")
+        }
+
+
+    override fun getStatus(): Result<Status> =
+        runCatching {
+            val hostAliases = hostRepository.findAll().map {
+                it.alias
+            }
+
+            Status(
+                VERSION,
+                Status.State.UP,
+                hostAliases
             )
         }
 
-        hostRepository.add(host)
-    }
+    override fun removeHost(alias: HostAlias): Result<Host> =
+        runCatching {
+            log.d {
+                "Trying to remove host aliased as '$alias'..."
+            }
 
-    override fun getHost(alias: HostAlias) =
-        hostRepository.findByAlias(alias)
+            val host = getHost(alias).getOrThrow()
 
-    override fun getStatus(): Status {
-        val hostAliases = hostRepository.findAll().map {
-            it.alias
+            hostRepository.removeByAlias(host.alias)
+
+            host
         }
-
-        return Status(
-            VERSION,
-            Status.State.UP,
-            hostAliases
-        )
-    }
-
-    override fun removeHost(alias: HostAlias) =
-        hostRepository.removeByAlias(alias)
 }
