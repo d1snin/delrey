@@ -33,7 +33,7 @@ class GetStatusRoute : Route, KoinComponent {
     private val hostService by inject<HostService>()
 
     override fun Routing.apply() {
-        get(Paths.GET_STATUS_ROUTE) {
+        get(Paths.GET_STATUS) {
             val status = hostService.getStatus().getOrThrow()
 
             call.respond(status)

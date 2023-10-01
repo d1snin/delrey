@@ -16,5 +16,9 @@
 
 package dev.d1s.delrey.daemon
 
+import dev.d1s.delrey.daemon.di.setupDi
+
 fun main() {
+    setupDi()
+    DelreyDaemonApplication().run()
 }

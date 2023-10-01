@@ -31,6 +31,8 @@ dependencies {
     val logbackVersion: String by project
     val kmLogVersion: String by project
 
+    val ktorVersion: String by project
+
     val turtleVersion: String by project
 
     val hopliteVersion: String by project
@@ -43,6 +45,10 @@ dependencies {
 
     implementation("ch.qos.logback:logback-classic:$logbackVersion")
     implementation("org.lighthousegames:logging:$kmLogVersion")
+
+    api("io.ktor:ktor-client-core:$ktorVersion")
+    implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
+    implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
 
     implementation("com.lordcodes.turtle:turtle:$turtleVersion")
 

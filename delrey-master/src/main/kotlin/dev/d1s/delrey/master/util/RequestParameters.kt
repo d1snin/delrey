@@ -17,13 +17,14 @@
 package dev.d1s.delrey.master.util
 
 import dev.d1s.delrey.common.Paths
+import dev.d1s.delrey.common.Whoami
 import io.ktor.server.application.*
 import io.ktor.server.plugins.*
 
 val ApplicationCall.requiredIdParameter: String
     get() = requiredParameter(Paths.ID_PARAMETER)
 
-val ApplicationCall.requiredWhoamiQueryParameter: String
+val ApplicationCall.requiredWhoamiQueryParameter: Whoami
     get() = requiredQueryParameter(Paths.WHOAMI_QUERY_PARAMETER)
 
 private fun ApplicationCall.requiredParameter(parameter: String) =

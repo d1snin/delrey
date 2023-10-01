@@ -22,7 +22,7 @@ public object Paths {
 
     public const val WHOAMI_QUERY_PARAMETER: String = "whoami"
 
-    public const val GET_STATUS_ROUTE: String = "/status"
+    public const val GET_STATUS: String = "/status"
 
     public const val POST_RUN: String = "/runs"
     public const val GET_RUN: String = "/runs/{$ID_PARAMETER}"

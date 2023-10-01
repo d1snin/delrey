@@ -90,10 +90,13 @@ class DefaultRunService : RunService, KoinComponent {
 
             val run = getRun(runId).getOrThrow()
 
+            val hostAlias = run.host
+            hostService.getHost(hostAlias).getOrThrow()
+
             val newRun = Run(
                 runId,
                 run.command,
-                run.host,
+                hostAlias,
                 physicalModification.pid,
                 physicalModification.status,
                 physicalModification.output
