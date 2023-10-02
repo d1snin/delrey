@@ -10,7 +10,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.koin.core.component.KoinComponent
 import org.lighthousegames.logging.logging
-import java.lang.IllegalStateException
 
 interface CommandRunner {
 

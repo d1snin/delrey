@@ -20,6 +20,7 @@ plugins {
     kotlin("jvm")
     application
     id("com.github.ben-manes.versions")
+    id("com.github.johnrengelman.shadow")
 }
 
 java {
@@ -47,8 +48,6 @@ dependencies {
     implementation("org.lighthousegames:logging:$kmLogVersion")
 
     api("io.ktor:ktor-client-core:$ktorVersion")
-    implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
-    implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
 
     implementation("com.lordcodes.turtle:turtle:$turtleVersion")
 

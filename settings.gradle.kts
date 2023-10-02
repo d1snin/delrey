@@ -24,6 +24,8 @@ pluginManagement {
 
         val versionsPluginVersion: String by settings
 
+        val shadowVersion: String by settings
+
         kotlin("multiplatform") version kotlinVersion
         kotlin("jvm") version kotlinVersion
         kotlin("plugin.serialization") version kotlinVersion
@@ -31,6 +33,8 @@ pluginManagement {
         id("io.ktor.plugin") version ktorVersion
 
         id("com.github.ben-manes.versions") version versionsPluginVersion
+
+        id("com.github.johnrengelman.shadow") version shadowVersion
     }
 }
 

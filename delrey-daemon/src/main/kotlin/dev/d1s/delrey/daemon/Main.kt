@@ -19,7 +19,12 @@ package dev.d1s.delrey.daemon
 import dev.d1s.delrey.daemon.di.setupDi
 import kotlinx.coroutines.runBlocking
 
-fun main() {
+private lateinit var arguments: Array<String>
+val MainArgs get() = arguments
+
+fun main(args: Array<String>) {
+    arguments = args
+
     setupDi()
 
     runBlocking {

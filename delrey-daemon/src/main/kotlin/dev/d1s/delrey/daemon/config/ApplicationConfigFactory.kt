@@ -3,10 +3,8 @@ package dev.d1s.delrey.daemon.config
 import com.sksamuel.hoplite.ConfigLoaderBuilder
 import com.sksamuel.hoplite.sources.CommandLinePropertySource
 import com.sksamuel.hoplite.sources.EnvironmentVariablesPropertySource
-import org.lighthousegames.logging.logging
-import java.lang.management.ManagementFactory
+import dev.d1s.delrey.daemon.MainArgs
 
-private const val COMMAND_LINE_PREFIX = "delrey.daemon."
 private const val COMMAND_LINE_DELIMITER = "="
 
 private const val ENV_VAR_PREFIX = "DELREY_DAEMON__"
@@ -16,14 +14,14 @@ interface ApplicationConfigFactory {
     val config: ApplicationConfig
 }
 
-class DefaultApplicationConfigFactory : ApplicationConfigFactory {
+class DefaultApplicationConfigFactory() : ApplicationConfigFactory {
 
     override val config = loadConfig()
 
     private fun loadConfig(): ApplicationConfig {
         val commandLinePropertySource = CommandLinePropertySource(
-            arguments = ManagementFactory.getRuntimeMXBean().inputArguments.toTypedArray(),
-            prefix = COMMAND_LINE_PREFIX,
+            arguments = MainArgs,
+            prefix = "",
             delimiter = COMMAND_LINE_DELIMITER
         )
 
