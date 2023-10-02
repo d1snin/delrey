@@ -53,8 +53,14 @@ class SessionRoute : Route, KoinComponent {
             hostService.addHost(host).getOrThrow()
 
             while (true) {
-                val modification = try {
-                    receiveDeserialized<PhysicalRunModification>()
+                try {
+                    val modification = receiveDeserialized<PhysicalRunModification>()
+
+                    log.d {
+                        "Received run modification: $modification"
+                    }
+
+                    runService.updateRun(modification).getOrThrow()
                 } catch (e: Throwable) {
                     log.w {
                         "Failed to receive physical modification. See you soon, $hostAlias."
@@ -64,8 +70,6 @@ class SessionRoute : Route, KoinComponent {
 
                     throw e
                 }
-
-                runService.updateRun(modification).getOrThrow()
             }
         }
     }

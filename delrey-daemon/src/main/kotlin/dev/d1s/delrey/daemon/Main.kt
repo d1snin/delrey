@@ -17,8 +17,12 @@
 package dev.d1s.delrey.daemon
 
 import dev.d1s.delrey.daemon.di.setupDi
+import kotlinx.coroutines.runBlocking
 
 fun main() {
     setupDi()
-    DelreyDaemonApplication().run()
+
+    runBlocking {
+        DelreyDaemonApplication().run()
+    }
 }

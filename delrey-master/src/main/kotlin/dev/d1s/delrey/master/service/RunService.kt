@@ -62,8 +62,8 @@ class DefaultRunService : RunService, KoinComponent {
                 command = command,
                 host = hostAlias,
                 pid = null,
-                status = null,
-                output = null
+                output = null,
+                status = null
             )
 
             runRepository.add(run)
@@ -85,7 +85,7 @@ class DefaultRunService : RunService, KoinComponent {
             val runId = physicalModification.id
 
             log.d {
-                "Updating run with id '$runId'"
+                "Updating run with id '$runId'. Physical modification: $physicalModification"
             }
 
             val run = getRun(runId).getOrThrow()
@@ -98,8 +98,8 @@ class DefaultRunService : RunService, KoinComponent {
                 run.command,
                 hostAlias,
                 physicalModification.pid,
-                physicalModification.status,
-                physicalModification.output
+                physicalModification.output,
+                physicalModification.status
             )
 
             runRepository.updateById(runId, newRun)

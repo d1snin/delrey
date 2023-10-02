@@ -18,15 +18,9 @@ interface ApplicationConfigFactory {
 
 class DefaultApplicationConfigFactory : ApplicationConfigFactory {
 
-    private val log = logging()
-
     override val config = loadConfig()
 
     private fun loadConfig(): ApplicationConfig {
-        log.i {
-            "Loading config from environment variables..."
-        }
-
         val commandLinePropertySource = CommandLinePropertySource(
             arguments = ManagementFactory.getRuntimeMXBean().inputArguments.toTypedArray(),
             prefix = COMMAND_LINE_PREFIX,

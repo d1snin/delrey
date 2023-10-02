@@ -23,12 +23,13 @@ public interface DelreyMasterClient {
 
     public suspend fun getRun(id: RunId): Result<Run>
 
-    public suspend fun session(block: suspend RunContext.() -> Unit): Result<Unit>
+    public suspend fun session(block: suspend (RunContext) -> Unit): Result<Unit>
 }
 
 internal class DefaultDelreyMasterClient(
     private val httpBase: Url,
     private val wsBase: Url,
+    private val whoami: Whoami,
     private val token: String?
 ) : DelreyMasterClient {
 
@@ -75,14 +76,17 @@ internal class DefaultDelreyMasterClient(
             httpClient.get(path).body()
         }
 
-    override suspend fun session(block: suspend RunContext.() -> Unit): Result<Unit> =
+    override suspend fun session(block: suspend (RunContext) -> Unit): Result<Unit> =
         runCatching {
             val url = URLBuilder(wsBase).apply {
                 path(Paths.SESSION)
             }.buildString()
 
+            val requestConfiguration: HttpRequestBuilder.() -> Unit = {
+                parameter(Paths.WHOAMI_QUERY_PARAMETER, whoami)
+            }
 
-            httpClient.webSocket(url) {
+            httpClient.webSocket(url, requestConfiguration) {
                 while (true) {
                     val run = receiveDeserialized<Run>()
                     val context = RunContext(run, session = this)
@@ -98,5 +102,10 @@ internal class DefaultDelreyMasterClient(
         }
 }
 
-public fun masterClient(httpBase: Url, wsBase: Url, token: String? = null): DelreyMasterClient =
-    DefaultDelreyMasterClient(httpBase, wsBase, token)
+public fun masterClient(
+    httpBase: Url,
+    wsBase: Url,
+    whoami: Whoami,
+    token: String? = null
+): DelreyMasterClient =
+    DefaultDelreyMasterClient(httpBase, wsBase, whoami, token)

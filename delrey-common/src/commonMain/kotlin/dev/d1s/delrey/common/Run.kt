@@ -35,9 +35,9 @@ public interface PhysicalRun {
 
     public val pid: Pid?
 
-    public val status: ExitCode?
-
     public val output: Output?
+
+    public val status: ExitCode?
 }
 
 @Serializable
@@ -46,8 +46,8 @@ public data class Run(
     override val command: Command,
     override val host: HostAlias,
     override val pid: Pid?,
-    override val status: ExitCode?,
-    override val output: Output?
+    override val output: Output?,
+    override val status: ExitCode?
 ) : AbstractRun, PhysicalRun
 
 @Serializable
@@ -60,6 +60,6 @@ public data class RunModification(
 public data class PhysicalRunModification(
     val id: RunId,
     override val pid: Pid?,
-    override val status: ExitCode?,
-    override val output: Output?
+    override val output: Output?,
+    override val status: ExitCode?
 ) : PhysicalRun

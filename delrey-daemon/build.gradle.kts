@@ -41,7 +41,7 @@ dependencies {
 
     val dispatchVersion: String by project
 
-    implementation(project(":delrey-common"))
+    implementation(project(":delrey-client"))
 
     implementation("ch.qos.logback:logback-classic:$logbackVersion")
     implementation("org.lighthousegames:logging:$kmLogVersion")

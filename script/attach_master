@@ -1,0 +1,3 @@
+#!/bin/bash
+
+docker-compose -f ./delrey-master/docker/docker-compose.yml logs --follow

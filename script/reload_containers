@@ -6,5 +6,5 @@ docker-compose -f ./delrey-daemon/docker/docker-compose.yml down
 ./gradlew delrey-master:publishImageToLocalRegistry
 ./gradlew delrey-daemon:installDist
 
-docker-compose -f ./delrey-master/docker/docker-compose.yml up
-docker-compose -f ./delrey-daemon/docker/docker-compose.yml up --build
+docker-compose -f ./delrey-master/docker/docker-compose.yml up -d
+docker-compose -f ./delrey-daemon/docker/docker-compose.yml up -d --build
