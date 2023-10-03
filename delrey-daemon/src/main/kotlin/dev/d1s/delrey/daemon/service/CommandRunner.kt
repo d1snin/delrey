@@ -4,10 +4,7 @@ import com.lordcodes.turtle.ProcessCallbacks
 import com.lordcodes.turtle.ShellRunException
 import com.lordcodes.turtle.shellRun
 import dev.d1s.delrey.client.session.RunContext
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 import org.koin.core.component.KoinComponent
 import org.lighthousegames.logging.logging
 
@@ -23,40 +20,52 @@ class DefaultCommandRunner : CommandRunner, KoinComponent {
     private val log = logging()
 
     override fun run(context: RunContext) {
-        val command = context.run.command
-
         log.d {
-            "Running $command"
+            "Running $context.run.command"
         }
 
-        try {
-            shellRun {
-                val callback = CommandProcessCallback(context, commandScope)
-                val output = command(command.name, command.arguments, callback)
+        val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
+            when {
+                throwable is ShellRunException -> {
+                    val status = throwable.exitCode
 
-                log.d {
-                    "Handled process output: ${output.length} chars long"
+                    log.w {
+                        "Command failed to run with exit code $status"
+                    }
+
+                    commandScope.launch {
+                        context.modify(
+                            output = throwable.errorText,
+                            status = status
+                        )
+                    }
                 }
 
-                commandScope.launch {
-                    context.modify(output = output)
-                }
-
-                output
+                else -> throw throwable
             }
-        } catch (commandFailed: ShellRunException) {
-            val status = commandFailed.exitCode
+        }
 
-            log.w {
-                "Command failed to run with exit code $status"
+        commandScope.launch(exceptionHandler) {
+            runCommand(context)
+        }
+    }
+
+    private fun runCommand(context: RunContext) {
+        val command = context.run.command
+
+        shellRun {
+            val callback = CommandProcessCallback(context, commandScope)
+            val output = command(command.name, command.arguments, callback)
+
+            log.d {
+                "Handled process output: ${output.length} chars long"
             }
 
             commandScope.launch {
-                context.modify(
-                    output = commandFailed.errorText,
-                    status = status
-                )
+                context.modify(output = output)
             }
+
+            output
         }
     }
 
