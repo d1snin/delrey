@@ -25,10 +25,10 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Build with Gradle
+      - name: Build
         uses: gradle/gradle-build-action@0d13054264b0bb894ded474f08ebb30921341cee
         with:
-          arguments: build
+          arguments: delrey-master:build delrey-daemon:shadowJar delrey-client:build
 
       - name: Upload Master Artifact
         uses: actions/upload-artifact@v3.0.0
