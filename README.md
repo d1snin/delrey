@@ -79,6 +79,18 @@ Fetch current Master server status via `GET /status`:
 ```http request
 GET https://rc.example.com/status
 ```
+```
+HTTP/1.1 200 OK
+Content-Length: 43
+Content-Type: application/json
+Connection: keep-alive
+
+{
+    "version": "0.0.1",
+    "state": "UP",
+    "hosts": []
+}
+```
 
 Post command to host via `POST /runs`
 
@@ -97,6 +109,8 @@ Authorization: <token>
     "host": "<host name (whoami)>"
 }
 ```
+```
+```
 
 Get run state via `GET /runs/{id}`
 
@@ -104,6 +118,8 @@ Get run state via `GET /runs/{id}`
 GET https://rc.example.com/runs/<run id>
 Content-Type: application/json
 Authorization: <token>
+```
+```
 ```
 
 ### Code of Conduct
