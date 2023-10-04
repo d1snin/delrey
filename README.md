@@ -50,7 +50,7 @@ docker-compose -f ./delrey-master/docker/docker-compose.yml up -d
 
 **Configuring Delrey Daemon**
 
-Build Daemon distribution (you can also download it from the Releases page)
+Build Daemon distribution (you can also download it as [Actions artifact](https://github.com/d1snin/delrey/actions))
 
 ```
 ./gradlew delrey-daemon:shadowJar
