@@ -63,8 +63,8 @@ java -jar masterHttpBase=... masterWsBase=... whoami=...
 ```
 
 Where:
-`masterHttpBase`: Base HTTP URL of Delrey Master server, e.g. `https://rc.d1s.dev`
-`masterWsBase`: Base WebSocket URL of Delrey Master server, e.g. `wss://rc.d1s.dev`
+`masterHttpBase`: Base HTTP URL of Delrey Master server, e.g. `https://rc.d1s.dev`\
+`masterWsBase`: Base WebSocket URL of Delrey Master server, e.g. `wss://rc.d1s.dev`\
 `whoami`: Current host identifier. Any value, e.g. `my-laptop`
 
 *Note:* provided configuration will be automatically stored in current working directory, so there is no
