@@ -5,10 +5,7 @@ import dev.d1s.delrey.daemon.DelreyDaemonApplication
 import dev.d1s.delrey.daemon.config.ApplicationConfig
 import dev.d1s.delrey.daemon.config.ApplicationConfigFactory
 import dev.d1s.delrey.daemon.config.DefaultApplicationConfigFactory
-import dev.d1s.delrey.daemon.service.CommandRunner
-import dev.d1s.delrey.daemon.service.DefaultCommandRunner
-import dev.d1s.delrey.daemon.service.DefaultSessionListener
-import dev.d1s.delrey.daemon.service.SessionListener
+import dev.d1s.delrey.daemon.service.*
 import org.koin.core.context.GlobalContext.startKoin
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.singleOf
@@ -36,6 +33,8 @@ fun Module.application() {
 }
 
 fun Module.config() {
+    singleOf<PersistentConfigService>(::DefaultPersistentConfigService)
+
     singleOf<ApplicationConfigFactory>(::DefaultApplicationConfigFactory)
 
     single {
@@ -46,9 +45,8 @@ fun Module.config() {
 fun Module.client() {
     single {
         val config = get<ApplicationConfig>()
-        val masterConfig = config.master
 
-        masterClient(masterConfig.httpBase, masterConfig.wsBase, config.whoami)
+        masterClient(config.requiredMasterHttpBase, config.requiredMasterWsBase, config.requiredWhoami)
     }
 }
 

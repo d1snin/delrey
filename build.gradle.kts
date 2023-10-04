@@ -31,5 +31,6 @@ allprojects {
         mavenCentral()
         maven(url = "https://maven.d1s.dev/releases")
         maven(url = "https://maven.d1s.dev/snapshots")
+        maven(url = "https://jitpack.io")
     }
 }

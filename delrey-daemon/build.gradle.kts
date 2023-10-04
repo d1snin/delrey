@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     kotlin("jvm")
+    kotlin("plugin.serialization")
     application
     id("com.github.ben-manes.versions")
     id("com.github.johnrengelman.shadow")
@@ -39,9 +40,13 @@ dependencies {
 
     val hopliteVersion: String by project
 
+    val shoeboxVersion: String by project
+
     val koinVersion: String by project
 
     val dispatchVersion: String by project
+
+    val kotlinxSerializationVersion: String by project
 
     implementation(project(":delrey-client"))
 
@@ -54,10 +59,14 @@ dependencies {
 
     implementation("com.sksamuel.hoplite:hoplite-core:$hopliteVersion")
 
+    implementation("com.github.kwebio:shoebox:$shoeboxVersion")
+
     implementation("io.insert-koin:koin-core:$koinVersion")
     implementation("io.insert-koin:koin-logger-slf4j:$koinVersion")
 
     implementation("com.rickbusarow.dispatch:dispatch-core:$dispatchVersion")
+
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinxSerializationVersion")
 }
 
 application {

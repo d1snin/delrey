@@ -4,6 +4,9 @@ import com.sksamuel.hoplite.ConfigLoaderBuilder
 import com.sksamuel.hoplite.sources.CommandLinePropertySource
 import com.sksamuel.hoplite.sources.EnvironmentVariablesPropertySource
 import dev.d1s.delrey.daemon.MainArgs
+import dev.d1s.delrey.daemon.service.PersistentConfigService
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 
 private const val COMMAND_LINE_DELIMITER = "="
 
@@ -14,7 +17,9 @@ interface ApplicationConfigFactory {
     val config: ApplicationConfig
 }
 
-class DefaultApplicationConfigFactory() : ApplicationConfigFactory {
+class DefaultApplicationConfigFactory : ApplicationConfigFactory, KoinComponent {
+
+    private val persistentConfigService by inject<PersistentConfigService>()
 
     override val config = loadConfig()
 
@@ -31,10 +36,12 @@ class DefaultApplicationConfigFactory() : ApplicationConfigFactory {
             prefix = ENV_VAR_PREFIX
         )
 
-        return ConfigLoaderBuilder.default()
+        val loadedConfig: ApplicationConfig = ConfigLoaderBuilder.default()
             .addPropertySource(commandLinePropertySource)
             .addPropertySource(environmentVariablePropertySource)
             .build()
             .loadConfigOrThrow()
+
+        return persistentConfigService.sync(loadedConfig)
     }
 }
