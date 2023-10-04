@@ -79,16 +79,18 @@ Fetch current Master server status via `GET /status`:
 ```http request
 GET https://rc.example.com/status
 ```
-```
+```http request
 HTTP/1.1 200 OK
-Content-Length: 43
+Content-Length: 49
 Content-Type: application/json
 Connection: keep-alive
 
 {
     "version": "0.0.1",
     "state": "UP",
-    "hosts": []
+    "hosts": [
+        "test"
+    ]
 }
 ```
 
@@ -109,7 +111,24 @@ Authorization: <token>
     "host": "<host name (whoami)>"
 }
 ```
-```
+```http request
+HTTP/1.1 202 Accepted
+Content-Length: 151
+Content-Type: application/json
+Connection: keep-alive
+
+{
+    "id": "a34b4887-ec04-434a-b3ff-af426be4ec25",
+    "command": {
+        "name": "pwd",
+        "arguments": []
+    },
+    "host": "test",
+    "pid": null,
+    "output": null,
+    "status": null,
+    "error": null
+}
 ```
 
 Get run state via `GET /runs/{id}`
@@ -119,7 +138,24 @@ GET https://rc.example.com/runs/<run id>
 Content-Type: application/json
 Authorization: <token>
 ```
-```
+```http request
+HTTP/1.1 200 OK
+Content-Length: 148
+Content-Type: application/json
+Connection: keep-alive
+
+{
+    "id": "a34b4887-ec04-434a-b3ff-af426be4ec25",
+    "command": {
+        "name": "pwd",
+        "arguments": []
+    },
+    "host": "test",
+    "pid": 51,
+    "output": "/",
+    "status": null,
+    "error": null
+}
 ```
 
 ### Code of Conduct
