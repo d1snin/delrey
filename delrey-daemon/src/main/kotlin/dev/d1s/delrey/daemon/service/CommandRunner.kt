@@ -17,31 +17,37 @@ class DefaultCommandRunner : CommandRunner, KoinComponent {
 
     private val commandScope = CoroutineScope(Dispatchers.IO)
 
+    private val errorHandlingScope = CoroutineScope(Dispatchers.IO)
+
     private val log = logging()
 
     override fun run(context: RunContext) {
         log.d {
-            "Running $context.run.command"
+            "Running ${context.run.command}"
         }
 
         val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
-            when {
-                throwable is ShellRunException -> {
-                    val status = throwable.exitCode
+            log.e(throwable) {
+                "Command failed to run"
+            }
 
-                    log.w {
-                        "Command failed to run with exit code $status"
-                    }
+            errorHandlingScope.launch {
+                context.modify(error = throwable.message)
 
-                    commandScope.launch {
+                when {
+                    throwable is ShellRunException -> {
+                        val status = throwable.exitCode
+
                         context.modify(
                             output = throwable.errorText,
                             status = status
                         )
                     }
-                }
 
-                else -> throw throwable
+                    else -> {
+                        throw throwable
+                    }
+                }
             }
         }
 

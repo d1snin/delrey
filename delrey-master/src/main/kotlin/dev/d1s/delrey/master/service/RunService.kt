@@ -63,7 +63,8 @@ class DefaultRunService : RunService, KoinComponent {
                 host = hostAlias,
                 pid = null,
                 output = null,
-                status = null
+                status = null,
+                error = null
             )
 
             runRepository.add(run)
@@ -99,7 +100,8 @@ class DefaultRunService : RunService, KoinComponent {
                 hostAlias,
                 physicalModification.pid,
                 physicalModification.output,
-                physicalModification.status
+                physicalModification.status,
+                physicalModification.error
             )
 
             runRepository.updateById(runId, newRun)

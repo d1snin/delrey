@@ -21,8 +21,9 @@ import kotlinx.serialization.Serializable
 public typealias RunId = String
 
 public typealias Pid = Long
-public typealias ExitCode = Int
 public typealias Output = String
+public typealias ExitCode = Int
+public typealias ErrorMessage = String
 
 public interface AbstractRun {
 
@@ -38,6 +39,8 @@ public interface PhysicalRun {
     public val output: Output?
 
     public val status: ExitCode?
+
+    public val error: ErrorMessage?
 }
 
 @Serializable
@@ -47,7 +50,8 @@ public data class Run(
     override val host: HostAlias,
     override val pid: Pid?,
     override val output: Output?,
-    override val status: ExitCode?
+    override val status: ExitCode?,
+    override val error: ErrorMessage?
 ) : AbstractRun, PhysicalRun
 
 @Serializable
@@ -61,5 +65,6 @@ public data class PhysicalRunModification(
     val id: RunId,
     override val pid: Pid?,
     override val output: Output?,
-    override val status: ExitCode?
+    override val status: ExitCode?,
+    override val error: ErrorMessage?
 ) : PhysicalRun
