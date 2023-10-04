@@ -21,7 +21,7 @@ data class ApplicationConfig(
         }
 
     val requiredWhoami
-        get() = requireNotNull(masterHttpBase) {
+        get() = requireNotNull(whoami) {
             "Host name is not defined (whoami)"
         }
 }
