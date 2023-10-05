@@ -15,8 +15,8 @@ interface PersistentConfigService {
 class DefaultPersistentConfigService : PersistentConfigService, KoinComponent {
 
     private val delreyConfigurationPath by lazy {
-        val userDirectory = System.getProperty("user.dir")
-        val path = Paths.get(userDirectory, DAEMON_CONFIG_DIRECTORY)
+        val homeDirectory = System.getProperty("user.home")
+        val path = Paths.get(homeDirectory, COMMON_CONFIG_DIRECTORY, DAEMON_CONFIG_DIRECTORY)
         Files.createDirectories(path)
     }
 
@@ -61,6 +61,7 @@ class DefaultPersistentConfigService : PersistentConfigService, KoinComponent {
 
     private companion object {
 
+        private const val COMMON_CONFIG_DIRECTORY = ".config"
         private const val DAEMON_CONFIG_DIRECTORY = "DelreyConfig"
 
         private const val DEFAULT_CONFIG = "default"

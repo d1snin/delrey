@@ -4,7 +4,10 @@ import com.lordcodes.turtle.ProcessCallbacks
 import com.lordcodes.turtle.ShellRunException
 import com.lordcodes.turtle.shellRun
 import dev.d1s.delrey.client.session.RunContext
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.koin.core.component.KoinComponent
 import org.lighthousegames.logging.logging
 
@@ -17,8 +20,6 @@ class DefaultCommandRunner : CommandRunner, KoinComponent {
 
     private val commandScope = CoroutineScope(Dispatchers.IO)
 
-    private val errorHandlingScope = CoroutineScope(Dispatchers.IO)
-
     private val log = logging()
 
     override fun run(context: RunContext) {
@@ -26,33 +27,12 @@ class DefaultCommandRunner : CommandRunner, KoinComponent {
             "Running ${context.run.command}"
         }
 
-        val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
-            log.e(throwable) {
-                "Command failed to run"
+        commandScope.launch {
+            try {
+                runCommand(context)
+            } catch (error: Throwable) {
+                handleError(context, error)
             }
-
-            errorHandlingScope.launch {
-                context.modify(error = throwable.message)
-
-                when {
-                    throwable is ShellRunException -> {
-                        val status = throwable.exitCode
-
-                        context.modify(
-                            output = throwable.errorText,
-                            status = status
-                        )
-                    }
-
-                    else -> {
-                        throw throwable
-                    }
-                }
-            }
-        }
-
-        commandScope.launch(exceptionHandler) {
-            runCommand(context)
         }
     }
 
@@ -68,10 +48,37 @@ class DefaultCommandRunner : CommandRunner, KoinComponent {
             }
 
             commandScope.launch {
-                context.modify(output = output)
+                try {
+                    context.modify(output = output)
+                } catch (_: Throwable) {
+                    // ignore
+                }
             }
 
             output
+        }
+    }
+
+    private suspend fun handleError(context: RunContext, throwable: Throwable) {
+        log.e(throwable) {
+            "Command failed to run"
+        }
+
+        context.modify(error = throwable.message)
+
+        when {
+            throwable is ShellRunException -> {
+                val status = throwable.exitCode
+
+                context.modify(
+                    output = throwable.errorText,
+                    status = status
+                )
+            }
+
+            else -> {
+                throw throwable
+            }
         }
     }
 
