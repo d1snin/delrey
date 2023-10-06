@@ -18,8 +18,9 @@ package dev.d1s.delrey.master.repository
 
 import dev.d1s.delrey.common.Run
 import dev.d1s.delrey.common.RunId
-import io.ktor.util.collections.*
+import io.github.reactivecircus.cache4k.Cache
 import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 
 interface RunRepository {
 
@@ -27,38 +28,27 @@ interface RunRepository {
 
     fun findById(id: RunId): Run?
 
-    fun updateById(id: RunId, run: Run): Boolean
+    fun updateById(id: RunId, run: Run)
 
-    fun removeById(id: RunId): Boolean
+    fun removeById(id: RunId)
 }
 
 class DefaultRunRepository : RunRepository, KoinComponent {
 
-    private val runs = ConcurrentSet<Run>()
+    private val runCache by inject<Cache<RunId, Run>>()
 
     override fun add(run: Run) {
-        runs += run
+        runCache.put(run.id, run)
     }
 
     override fun findById(id: RunId) =
-        runs.find {
-            it.id == id
-        }
+        runCache.get(id)
 
-    override fun updateById(id: RunId, run: Run): Boolean {
-        val removed = removeById(id)
-
-        if (!removed) {
-            return false
-        }
-
-        add(run)
-
-        return true
+    override fun updateById(id: RunId, run: Run) {
+        runCache.put(id, run)
     }
 
-    override fun removeById(id: RunId) =
-        runs.removeIf {
-            it.id == id
-        }
+    override fun removeById(id: RunId) {
+        runCache.invalidate(id)
+    }
 }

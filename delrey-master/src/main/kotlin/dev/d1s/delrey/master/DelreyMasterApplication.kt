@@ -35,6 +35,7 @@ object DelreyMasterApplication : ServerApplication(), KoinComponent {
         ApplicationConfigBean,
         ContentNegotiation,
         Security,
+        Caching,
         Services,
         Repositories,
         Routing,

@@ -41,6 +41,8 @@ dependencies {
 
     val dispatchVersion: String by project
 
+    val cache4kVersion: String by project
+
     implementation("dev.d1s.exkt:exkt-common:$exktVersion")
     implementation("dev.d1s.exkt:exkt-ktor-server:$exktVersion")
     implementation("dev.d1s.exkt:exkt-ktor-server-koin:$exktVersion")
@@ -69,6 +71,8 @@ dependencies {
     implementation("io.insert-koin:koin-logger-slf4j:$koinVersion")
 
     implementation("com.rickbusarow.dispatch:dispatch-core:$dispatchVersion")
+
+    implementation("io.github.reactivecircus.cache4k:cache4k:$cache4kVersion")
 }
 
 application {
