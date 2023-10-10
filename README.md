@@ -1,6 +1,6 @@
 [![](https://github.com/d1snin/delrey/actions/workflows/build.yml/badge.svg)](https://github.com/d1snin/delrey/actions/workflows/build.yml)
 
-## Delrey
+# Delrey
 
 Delrey is a very small remote shell access toolkit. It uses JDK's standard `ProcessBuilder` API to spawn processes via
 commands received from
@@ -10,7 +10,7 @@ It is not really stable and is not intended to be used in production environment
 lightweight solution to
 control (well, try to) my devices.
 
-### Usage
+## Usage
 
 You have to boot up your own Delrey Master server which the clients will connect to.
 Then you can run client binaries on any host you would like to control remotely.
@@ -22,7 +22,7 @@ git clone https://github.com/d1snin/delrey
 cd delrey
 ```
 
-**Configuring Delrey Master server**
+### Configuring Delrey Master server
 
 Copy environment configuration:
 
@@ -48,7 +48,7 @@ Run Docker container:
 docker-compose -f ./delrey-master/docker/docker-compose.yml up -d
 ```
 
-**Configuring Delrey Daemon**
+### Configuring Delrey Daemon
 
 Build Daemon distribution (you can also download it as [Actions artifact](https://github.com/d1snin/delrey/actions))
 
@@ -72,9 +72,9 @@ need to repeat the same configuration each run.
 
 I suggest configuring your system to run Daemon distribution on startup.
 
-**Sending requests**
+### Sending requests
 
-Fetch current Master server status via `GET /status`:
+**Fetch current Master server status via `GET /status`:**
 
 ```http request
 GET https://rc.example.com/status
@@ -94,7 +94,7 @@ Connection: keep-alive
 }
 ```
 
-Post command to host via `POST /runs`
+**Post command to host via `POST /runs`**
 
 ```http request
 POST https://rc.example.com/runs
@@ -128,10 +128,49 @@ Connection: keep-alive
     "output": null,
     "status": null,
     "error": null
+    "finished": false
 }
 ```
 
-Get run state via `GET /runs/{id}`
+You can also wait for run completion by specifying `wait` query parameter set to `true`:
+
+```http request
+POST https://rc.example.com/runs?wait=true
+Content-Type: application/json
+Authorization: <token>
+
+{
+    "command": {
+        "name": "<command name, e.g. pwd>",
+        "arguments": [
+            "<command args>"
+        ]
+    },
+    "host": "<host name (whoami)>"
+}
+```
+```http request
+HTTP/1.1 200 OK
+Content-Length: 191
+Content-Type: application/json
+Connection: keep-alive
+
+{
+    "id": "d506d2dd-c566-4812-aae9-64fc1b01c392",
+    "command": {
+        "name": "pwd",
+        "arguments": []
+    },
+    "host": "test",
+    "pid": 34063,
+    "output": "/home/d1snin/projects/delrey",
+    "status": 0,
+    "error": null,
+    "finished": true
+}
+```
+
+**Get run state via `GET /runs/{id}`**
 
 ```http request
 GET https://rc.example.com/runs/<run id>
@@ -151,18 +190,19 @@ Connection: keep-alive
         "arguments": []
     },
     "host": "test",
-    "pid": 51,
-    "output": "/",
+    "pid": 34060,
+    "output": "/home/d1snin/projects/delrey",
     "status": null,
-    "error": null
+    "error": null,
+    "finished": true
 }
 ```
 
-### Code of Conduct
+## Code of Conduct
 
 Please refer to [CODE_OF_CONDUCT.md](./CODE_OF_CONDUCT.md).
 
-### License
+## License
 
 ```
 Copyright 2023 Mikhail Titov <me@d1s.dev>
