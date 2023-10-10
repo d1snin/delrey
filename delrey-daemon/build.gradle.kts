@@ -36,8 +36,6 @@ dependencies {
 
     val ktorVersion: String by project
 
-    val turtleVersion: String by project
-
     val hopliteVersion: String by project
 
     val shoeboxVersion: String by project
@@ -54,8 +52,6 @@ dependencies {
     implementation("org.lighthousegames:logging:$kmLogVersion")
 
     api("io.ktor:ktor-client-core:$ktorVersion")
-
-    implementation("com.lordcodes.turtle:turtle:$turtleVersion")
 
     implementation("com.sksamuel.hoplite:hoplite-core:$hopliteVersion")
 

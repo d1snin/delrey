@@ -1,8 +1,5 @@
 package dev.d1s.delrey.daemon.service
 
-import com.lordcodes.turtle.ProcessCallbacks
-import com.lordcodes.turtle.ShellRunException
-import com.lordcodes.turtle.shellRun
 import dev.d1s.delrey.client.session.RunContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -10,6 +7,9 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.koin.core.component.KoinComponent
 import org.lighthousegames.logging.logging
+import java.io.BufferedReader
+import java.io.SequenceInputStream
+import java.util.concurrent.TimeUnit
 
 interface CommandRunner {
 
@@ -19,6 +19,11 @@ interface CommandRunner {
 class DefaultCommandRunner : CommandRunner, KoinComponent {
 
     private val commandScope = CoroutineScope(Dispatchers.IO)
+
+    private val processBuilder
+        get() = ProcessBuilder()
+            .redirectOutput(ProcessBuilder.Redirect.PIPE)
+            .redirectError(ProcessBuilder.Redirect.PIPE)
 
     private val log = logging()
 
@@ -36,27 +41,68 @@ class DefaultCommandRunner : CommandRunner, KoinComponent {
         }
     }
 
-    private fun runCommand(context: RunContext) {
+    private suspend fun runCommand(context: RunContext) {
         val command = context.run.command
+        val splitCommand = listOf(command.name) + command.arguments
 
-        shellRun {
-            val callback = CommandProcessCallback(context, commandScope)
-            val output = command(command.name, command.arguments, callback)
-
-            log.d {
-                "Handled process output: ${output.length} chars long"
-            }
-
-            commandScope.launch {
-                try {
-                    context.modify(output = output)
-                } catch (_: Throwable) {
-                    // ignore
-                }
-            }
-
-            output
+        val process = withContext(Dispatchers.IO) {
+            processBuilder.command(splitCommand).start()
         }
+
+        process.handleProcess(context)
+    }
+
+    private suspend fun Process.handleProcess(context: RunContext) {
+        handlePid(context)
+
+        withContext(Dispatchers.IO) {
+            waitFor(PROCESS_TIMEOUT, TimeUnit.HOURS)
+        }
+
+        handleStatus(context)
+
+        handleOutput(context)
+    }
+
+    private suspend fun Process.handlePid(context: RunContext) {
+        val pid = try {
+            pid()
+        } catch (_: UnsupportedOperationException) {
+            null
+        }
+
+        log.d {
+            "Handled process pid: $pid"
+        }
+
+        context.modify(pid = pid)
+    }
+
+    private suspend fun Process.handleStatus(context: RunContext) {
+        val exitCode = try {
+            exitValue()
+        } catch (_: IllegalThreadStateException) {
+            null
+        }
+
+        log.d {
+            "Handled process status: $exitCode"
+        }
+
+        context.modify(status = exitCode)
+    }
+
+    private suspend fun Process.handleOutput(context: RunContext) {
+        val outputText = SequenceInputStream(inputStream, errorStream)
+            .bufferedReader()
+            .use(BufferedReader::readText)
+            .trim()
+
+        log.d {
+            "Handled process output: ${outputText.length} characters"
+        }
+
+        context.modify(output = outputText)
     }
 
     private suspend fun handleError(context: RunContext, throwable: Throwable) {
@@ -65,67 +111,10 @@ class DefaultCommandRunner : CommandRunner, KoinComponent {
         }
 
         context.modify(error = throwable.message)
-
-        when {
-            throwable is ShellRunException -> {
-                val status = throwable.exitCode
-
-                context.modify(
-                    output = throwable.errorText,
-                    status = status
-                )
-            }
-
-            else -> {
-                throw throwable
-            }
-        }
     }
 
-    private class CommandProcessCallback(
-        private val context: RunContext,
-        private val commandScope: CoroutineScope
-    ) : ProcessCallbacks {
+    private companion object {
 
-        private val log = logging()
-
-        override fun onProcessStart(process: Process) {
-            commandScope.launch {
-                handlePid(process, context)
-                handleStatus(process, context)
-            }
-        }
-
-        private suspend fun handlePid(process: Process, context: RunContext) {
-            val pid = try {
-                process.pid()
-            } catch (_: UnsupportedOperationException) {
-                null
-            }
-
-            log.d {
-                "Handled process pid: $pid"
-            }
-
-            context.modify(pid = pid)
-        }
-
-        private suspend fun handleStatus(process: Process, context: RunContext) {
-            withContext(Dispatchers.IO) {
-                process.waitFor()
-            }
-
-            val exitCode = try {
-                process.exitValue()
-            } catch (_: IllegalThreadStateException) {
-                null
-            }
-
-            log.d {
-                "Handled process status: $exitCode"
-            }
-
-            context.modify(status = exitCode)
-        }
+        private const val PROCESS_TIMEOUT = 12L
     }
 }
