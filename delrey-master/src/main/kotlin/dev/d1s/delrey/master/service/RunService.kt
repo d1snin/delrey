@@ -30,7 +30,11 @@ import java.util.*
 
 interface RunService {
 
+    suspend fun run(modification: RunModification, wait: Boolean): Result<Run>
+
     suspend fun launch(modification: RunModification): Result<Run>
+
+    suspend fun execute(modification: RunModification): Result<Run>
 
     fun getRun(runId: RunId): Result<Run>
 
@@ -46,6 +50,12 @@ class DefaultRunService : RunService, KoinComponent {
     private val randomId get() = UUID.randomUUID().toString()
 
     private val log = logging()
+    override suspend fun run(modification: RunModification, wait: Boolean): Result<Run> =
+        if (wait) {
+            execute(modification)
+        } else {
+            launch(modification)
+        }
 
     override suspend fun launch(modification: RunModification): Result<Run> =
         runCatching {
@@ -56,7 +66,6 @@ class DefaultRunService : RunService, KoinComponent {
             val (command, hostAlias) = modification
             val host = hostService.getHost(hostAlias).getOrThrow()
 
-
             val run = Run(
                 id = randomId,
                 command = command,
@@ -64,13 +73,26 @@ class DefaultRunService : RunService, KoinComponent {
                 pid = null,
                 output = null,
                 status = null,
-                error = null
+                error = null,
+                finished = false
             )
 
             runRepository.add(run)
 
             val serverSession = (host.session as WebSocketServerSession)
             serverSession.sendSerialized(run)
+
+            run
+        }
+
+    override suspend fun execute(modification: RunModification): Result<Run> =
+        runCatching {
+            var run = launch(modification).getOrThrow()
+            val runId = run.id
+
+            do {
+                run = getRun(runId).getOrThrow()
+            } while (!run.finished)
 
             run
         }
@@ -101,7 +123,8 @@ class DefaultRunService : RunService, KoinComponent {
                 physicalModification.pid,
                 physicalModification.output,
                 physicalModification.status,
-                physicalModification.error
+                physicalModification.error,
+                physicalModification.finished
             )
 
             runRepository.updateById(runId, newRun)

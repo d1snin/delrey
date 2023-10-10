@@ -38,6 +38,8 @@ class DefaultCommandRunner : CommandRunner, KoinComponent {
             } catch (error: Throwable) {
                 handleError(context, error)
             }
+
+            context.modify(finished = true)
         }
     }
 

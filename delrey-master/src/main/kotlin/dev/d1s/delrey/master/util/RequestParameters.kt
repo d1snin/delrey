@@ -27,6 +27,9 @@ val ApplicationCall.requiredIdParameter: String
 val ApplicationCall.requiredWhoamiQueryParameter: Whoami
     get() = requiredQueryParameter(Paths.WHOAMI_QUERY_PARAMETER)
 
+val ApplicationCall.waitQueryParameter: Boolean
+    get() = request.queryParameters[Paths.WAIT_QUERY_PARAMETER]?.toBooleanStrictOrNull() ?: false
+
 private fun ApplicationCall.requiredParameter(parameter: String) =
     requiredValue(parameters[parameter], message = "Parameter '$parameter' not found")
 

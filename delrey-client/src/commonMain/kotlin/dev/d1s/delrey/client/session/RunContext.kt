@@ -12,14 +12,16 @@ public class RunContext(
         pid = null,
         output = null,
         status = null,
-        error = null
+        error = null,
+        finished = false
     )
 
     public suspend fun modify(
         pid: Pid? = modification.pid,
         output: Output? = modification.output,
         status: ExitCode? = modification.status,
-        error: ErrorMessage? = modification.error
+        error: ErrorMessage? = modification.error,
+        finished: Boolean = modification.finished
     ) {
         // Ты всегда находишься как-будто не здесь.
         // Когда я пытаюсь поговорить с тобой о чем-то серьезном, ты
@@ -33,7 +35,8 @@ public class RunContext(
             pid = pid,
             output = output,
             status = status,
-            error = error
+            error = error,
+            finished = finished
         )
 
         modification = physicalRunModification

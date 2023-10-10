@@ -22,6 +22,8 @@ public object Paths {
 
     public const val WHOAMI_QUERY_PARAMETER: String = "whoami"
 
+    public const val WAIT_QUERY_PARAMETER: String = "wait"
+
     public const val GET_STATUS: String = "/status"
 
     public const val POST_RUN: String = "/runs"

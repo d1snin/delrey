@@ -7,12 +7,12 @@ WEBSOCKET ws://192.168.0.200:8070/session?whoami=test
 GET http://192.168.0.200:8070/status
 
 ### GET Run
-GET http://192.168.0.200:8070/runs/a34b4887-ec04-434a-b3ff-af426be4ec25
+GET http://192.168.0.200:8070/runs/178c95da-9150-44c7-abe9-5cdbe81ca443
 Content-Type: application/json
 Authorization: {{token}}
 
 ### POST Run
-POST http://192.168.0.200:8070/runs
+POST http://192.168.0.200:8070/runs?wait=true
 Content-Type: application/json
 Authorization: {{token}}
 

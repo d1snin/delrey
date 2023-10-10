@@ -20,6 +20,7 @@ import dev.d1s.delrey.common.Paths
 import dev.d1s.delrey.common.RunModification
 import dev.d1s.delrey.common.validation.validateRun
 import dev.d1s.delrey.master.service.RunService
+import dev.d1s.delrey.master.util.waitQueryParameter
 import dev.d1s.exkt.ktor.server.koin.configuration.Route
 import io.ktor.http.*
 import io.ktor.server.application.*
@@ -43,9 +44,17 @@ class PostRunRoute : Route, KoinComponent {
                 val body = call.receive<RunModification>()
                 validateRun(body)
 
-                val run = runService.launch(body).getOrThrow()
+                val wait = call.waitQueryParameter
 
-                call.respond(HttpStatusCode.Accepted, run)
+                val run = runService.run(body, wait).getOrThrow()
+
+                val status = if (wait) {
+                    HttpStatusCode.OK
+                } else {
+                    HttpStatusCode.Accepted
+                }
+
+                call.respond(status, run)
             }
         }
     }

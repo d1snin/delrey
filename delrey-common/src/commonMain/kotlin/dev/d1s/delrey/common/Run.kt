@@ -41,6 +41,8 @@ public interface PhysicalRun {
     public val status: ExitCode?
 
     public val error: ErrorMessage?
+
+    public val finished: Boolean
 }
 
 @Serializable
@@ -51,7 +53,8 @@ public data class Run(
     override val pid: Pid?,
     override val output: Output?,
     override val status: ExitCode?,
-    override val error: ErrorMessage?
+    override val error: ErrorMessage?,
+    override val finished: Boolean
 ) : AbstractRun, PhysicalRun
 
 @Serializable
@@ -66,5 +69,6 @@ public data class PhysicalRunModification(
     override val pid: Pid?,
     override val output: Output?,
     override val status: ExitCode?,
-    override val error: ErrorMessage?
+    override val error: ErrorMessage?,
+    override val finished: Boolean
 ) : PhysicalRun
