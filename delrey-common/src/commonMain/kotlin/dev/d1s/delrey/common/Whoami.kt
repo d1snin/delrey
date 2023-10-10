@@ -1,3 +1,3 @@
 package dev.d1s.delrey.common
 
-public typealias Whoami = String
+public typealias Whoami = HostAlias

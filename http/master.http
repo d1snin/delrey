@@ -8,7 +8,10 @@ GET http://192.168.0.200:8070/status
 
 ### GET Run
 GET http://192.168.0.200:8070/runs/178c95da-9150-44c7-abe9-5cdbe81ca443
-Content-Type: application/json
+Authorization: {{token}}
+
+### GET Runs
+GET http://192.168.0.200:8070/runs?host=test
 Authorization: {{token}}
 
 ### POST Run

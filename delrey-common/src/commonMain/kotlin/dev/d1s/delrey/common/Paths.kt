@@ -24,10 +24,13 @@ public object Paths {
 
     public const val WAIT_QUERY_PARAMETER: String = "wait"
 
+    public const val HOST_QUERY_PARAMETER: String = "host"
+
     public const val GET_STATUS: String = "/status"
 
     public const val POST_RUN: String = "/runs"
     public const val GET_RUN: String = "/runs/{$ID_PARAMETER}"
+    public const val GET_RUNS: String = "/runs"
 
     public const val SESSION: String = "/session"
 }

@@ -16,6 +16,7 @@
 
 package dev.d1s.delrey.master.util
 
+import dev.d1s.delrey.common.HostAlias
 import dev.d1s.delrey.common.Paths
 import dev.d1s.delrey.common.Whoami
 import io.ktor.server.application.*
@@ -29,6 +30,9 @@ val ApplicationCall.requiredWhoamiQueryParameter: Whoami
 
 val ApplicationCall.waitQueryParameter: Boolean
     get() = request.queryParameters[Paths.WAIT_QUERY_PARAMETER]?.toBooleanStrictOrNull() ?: false
+
+val ApplicationCall.requiredHostQueryParameter: HostAlias
+    get() = requiredQueryParameter(Paths.HOST_QUERY_PARAMETER)
 
 private fun ApplicationCall.requiredParameter(parameter: String) =
     requiredValue(parameters[parameter], message = "Parameter '$parameter' not found")

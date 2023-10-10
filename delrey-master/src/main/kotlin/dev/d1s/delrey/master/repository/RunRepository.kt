@@ -16,8 +16,10 @@
 
 package dev.d1s.delrey.master.repository
 
+import dev.d1s.delrey.common.HostAlias
 import dev.d1s.delrey.common.Run
 import dev.d1s.delrey.common.RunId
+import dev.d1s.delrey.common.Runs
 import io.github.reactivecircus.cache4k.Cache
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
@@ -27,6 +29,8 @@ interface RunRepository {
     fun add(run: Run)
 
     fun findById(id: RunId): Run?
+
+    fun findAllByHost(alias: HostAlias): Runs
 
     fun updateById(id: RunId, run: Run)
 
@@ -43,6 +47,11 @@ class DefaultRunRepository : RunRepository, KoinComponent {
 
     override fun findById(id: RunId) =
         runCache.get(id)
+
+    override fun findAllByHost(alias: HostAlias): Runs =
+        runCache.asMap().values.filter {
+            it.host == alias
+        }
 
     override fun updateById(id: RunId, run: Run) {
         runCache.put(id, run)

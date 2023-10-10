@@ -25,6 +25,8 @@ public typealias Output = String
 public typealias ExitCode = Int
 public typealias ErrorMessage = String
 
+public typealias Runs = List<Run>
+
 public interface AbstractRun {
 
     public val command: Command

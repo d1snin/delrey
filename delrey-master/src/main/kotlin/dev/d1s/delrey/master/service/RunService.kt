@@ -16,10 +16,7 @@
 
 package dev.d1s.delrey.master.service
 
-import dev.d1s.delrey.common.PhysicalRunModification
-import dev.d1s.delrey.common.Run
-import dev.d1s.delrey.common.RunId
-import dev.d1s.delrey.common.RunModification
+import dev.d1s.delrey.common.*
 import dev.d1s.delrey.master.repository.RunRepository
 import io.ktor.server.plugins.*
 import io.ktor.server.websocket.*
@@ -37,6 +34,8 @@ interface RunService {
     suspend fun execute(modification: RunModification): Result<Run>
 
     fun getRun(runId: RunId): Result<Run>
+
+    fun getRuns(hostAlias: HostAlias): Result<Runs>
 
     fun updateRun(physicalModification: PhysicalRunModification): Result<Run>
 }
@@ -101,6 +100,13 @@ class DefaultRunService : RunService, KoinComponent {
         runCatching {
             runRepository.findById(runId)
                 ?: throw NotFoundException("Run not found by id '$runId'")
+        }
+
+    override fun getRuns(hostAlias: HostAlias): Result<Runs> =
+        runCatching {
+            val host = hostService.getHost(hostAlias).getOrThrow()
+
+            runRepository.findAllByHost(host.alias)
         }
 
     override fun updateRun(physicalModification: PhysicalRunModification): Result<Run> =
