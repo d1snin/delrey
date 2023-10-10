@@ -198,6 +198,35 @@ Connection: keep-alive
 }
 ```
 
+**Get runs by host via `GET /runs?host={host alias}`**
+
+```http request
+GET https://rc.example.com/runs?host=<host alias>
+Authorization: <token>
+```
+```http request
+HTTP/1.1 200 OK
+Content-Length: 193
+Content-Type: application/json
+Connection: keep-alive
+
+[
+    {
+        "id": "3ed2bcde-207d-4970-8f8e-3b39d6be9626",
+        "command": {
+            "name": "pwd",
+            "arguments": []
+        },
+        "host": "test",
+        "pid": 56675,
+        "output": "/home/d1snin/projects/delrey",
+        "status": 0,
+        "error": null,
+        "finished": true
+    }
+]
+```
+
 ## Code of Conduct
 
 Please refer to [CODE_OF_CONDUCT.md](./CODE_OF_CONDUCT.md).
