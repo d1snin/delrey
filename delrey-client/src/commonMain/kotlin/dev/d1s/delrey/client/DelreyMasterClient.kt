@@ -19,7 +19,7 @@ public interface DelreyMasterClient {
 
     public suspend fun getStatus(): Result<Status>
 
-    public suspend fun postRun(physicalRunModification: PhysicalRunModification): Result<Run>
+    public suspend fun postRun(physicalRunModification: PhysicalRunModification, wait: Boolean = false): Result<Run>
 
     public suspend fun getRun(id: RunId): Result<Run>
 
@@ -58,12 +58,13 @@ internal class DefaultDelreyMasterClient(
             httpClient.get(Paths.GET_STATUS).body()
         }
 
-    override suspend fun postRun(physicalRunModification: PhysicalRunModification): Result<Run> =
+    override suspend fun postRun(physicalRunModification: PhysicalRunModification, wait: Boolean): Result<Run> =
         runCatching {
             requireToken()
 
             httpClient.post(Paths.POST_RUN) {
                 contentType(ContentType.Application.Json)
+                parameter(Paths.WAIT_QUERY_PARAMETER, wait.toString())
                 setBody(physicalRunModification)
             }.body()
         }
