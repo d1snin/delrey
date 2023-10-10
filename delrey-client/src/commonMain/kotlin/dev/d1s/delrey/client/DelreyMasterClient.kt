@@ -23,6 +23,8 @@ public interface DelreyMasterClient {
 
     public suspend fun getRun(id: RunId): Result<Run>
 
+    public suspend fun getRuns(hostAlias: HostAlias): Result<Runs>
+
     public suspend fun session(block: suspend (RunContext) -> Unit): Result<Unit>
 }
 
@@ -75,6 +77,15 @@ internal class DefaultDelreyMasterClient(
 
             val path = Paths.GET_RUN.replaceIdPlaceholder(id)
             httpClient.get(path).body()
+        }
+
+    override suspend fun getRuns(hostAlias: HostAlias): Result<Runs> =
+        runCatching {
+            requireToken()
+
+            httpClient.get(Paths.GET_RUNS) {
+                parameter(Paths.HOST_QUERY_PARAMETER, hostAlias)
+            }.body()
         }
 
     override suspend fun session(block: suspend (RunContext) -> Unit): Result<Unit> =
