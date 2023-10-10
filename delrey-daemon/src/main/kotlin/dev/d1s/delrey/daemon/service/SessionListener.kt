@@ -27,7 +27,7 @@ class DefaultSessionListener : SessionListener, KoinComponent {
     override fun listen() =
         sessionScope.launch {
             log.i {
-                "Connecting to Delrey Master..."
+                "Communicating with Delrey Master..."
             }
 
             suspend fun tryOpenSession() {
