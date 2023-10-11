@@ -102,12 +102,7 @@ Content-Type: application/json
 Authorization: <token>
 
 {
-    "command": {
-        "name": "<command name, e.g. pwd>",
-        "arguments": [
-            "<command args>"
-        ]
-    },
+    "command": "<command (e.g. pwd)>",
     "host": "<host name (whoami)>"
 }
 ```
@@ -119,10 +114,7 @@ Connection: keep-alive
 
 {
     "id": "a34b4887-ec04-434a-b3ff-af426be4ec25",
-    "command": {
-        "name": "pwd",
-        "arguments": []
-    },
+    "command": "pwd",
     "host": "test",
     "pid": null,
     "output": null,
@@ -140,12 +132,7 @@ Content-Type: application/json
 Authorization: <token>
 
 {
-    "command": {
-        "name": "<command name, e.g. pwd>",
-        "arguments": [
-            "<command args>"
-        ]
-    },
+    "command": "<command (e.g. pwd)>",
     "host": "<host name (whoami)>"
 }
 ```
@@ -157,10 +144,7 @@ Connection: keep-alive
 
 {
     "id": "d506d2dd-c566-4812-aae9-64fc1b01c392",
-    "command": {
-        "name": "pwd",
-        "arguments": []
-    },
+    "command": "pwd",
     "host": "test",
     "pid": 34063,
     "output": "/home/d1snin/projects/delrey",
@@ -185,10 +169,7 @@ Connection: keep-alive
 
 {
     "id": "a34b4887-ec04-434a-b3ff-af426be4ec25",
-    "command": {
-        "name": "pwd",
-        "arguments": []
-    },
+    "command": "pwd",
     "host": "test",
     "pid": 34060,
     "output": "/home/d1snin/projects/delrey",
@@ -213,10 +194,7 @@ Connection: keep-alive
 [
     {
         "id": "3ed2bcde-207d-4970-8f8e-3b39d6be9626",
-        "command": {
-            "name": "pwd",
-            "arguments": []
-        },
+        "command": "pwd",
         "host": "test",
         "pid": 56675,
         "output": "/home/d1snin/projects/delrey",
