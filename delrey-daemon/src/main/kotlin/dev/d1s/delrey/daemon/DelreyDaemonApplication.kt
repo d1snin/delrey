@@ -1,11 +1,14 @@
 package dev.d1s.delrey.daemon
 
 import dev.d1s.delrey.client.DelreyMasterClient
+import dev.d1s.delrey.common.Status
 import dev.d1s.delrey.common.VERSION
 import dev.d1s.delrey.daemon.service.SessionListener
+import kotlinx.coroutines.delay
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import org.lighthousegames.logging.logging
+import kotlin.time.Duration.Companion.seconds
 
 class DelreyDaemonApplication : KoinComponent {
 
@@ -27,12 +30,29 @@ class DelreyDaemonApplication : KoinComponent {
     }
 
     private suspend fun checkCompatibility() {
-        val status = client.getStatus().getOrThrow()
+        suspend fun getStatus(): Status =
+            client.getStatus().getOrElse {
+                log.w {
+                    "Unable to fetch Delrey Master status" + (it.message?.let { ": $it" } ?: ".")
+                }
+
+                val delay = 5.seconds
+
+                log.w {
+                    "Retrying in $delay"
+                }
+
+                delay(delay)
+
+                getStatus()
+            }
+
+        val status = getStatus()
 
         val masterVersion = status.version
 
         log.i {
-            "Delrey Master Server version: $masterVersion; State: ${status.state}"
+            "Delrey Master server version: $masterVersion; State: ${status.state}"
         }
 
         if (VERSION != status.version) {
