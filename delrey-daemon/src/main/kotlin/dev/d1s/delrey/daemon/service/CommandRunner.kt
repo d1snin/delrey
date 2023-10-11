@@ -4,11 +4,11 @@ import dev.d1s.delrey.client.session.RunContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import org.koin.core.component.KoinComponent
 import org.lighthousegames.logging.logging
 import java.io.BufferedReader
 import java.io.SequenceInputStream
+import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
 interface CommandRunner {
@@ -18,7 +18,9 @@ interface CommandRunner {
 
 class DefaultCommandRunner : CommandRunner, KoinComponent {
 
-    private val commandScope = CoroutineScope(Dispatchers.IO)
+    private val executor = Executors.newCachedThreadPool()
+
+    private val clientScope = CoroutineScope(Dispatchers.IO)
 
     private val log = logging()
 
@@ -27,40 +29,38 @@ class DefaultCommandRunner : CommandRunner, KoinComponent {
             "Running ${context.run.command}"
         }
 
-        commandScope.launch {
+        executor.execute {
             try {
                 runCommand(context)
             } catch (error: Throwable) {
                 handleError(context, error)
             }
 
-            context.modify(finished = true)
+            context.launchModification {
+                modify(finished = true)
+            }
         }
     }
 
-    private suspend fun runCommand(context: RunContext) {
+    private fun runCommand(context: RunContext) {
         val command = context.run.command
 
-        val process = withContext(Dispatchers.IO) {
-            Runtime.getRuntime().exec(command)
-        }
+        val process = Runtime.getRuntime().exec(command)
 
         process.handleProcess(context)
     }
 
-    private suspend fun Process.handleProcess(context: RunContext) {
+    private fun Process.handleProcess(context: RunContext) {
         handlePid(context)
 
-        withContext(Dispatchers.IO) {
-            waitFor(PROCESS_TIMEOUT, TimeUnit.HOURS)
-        }
+        waitFor(PROCESS_TIMEOUT, TimeUnit.HOURS)
 
         handleStatus(context)
 
         handleOutput(context)
     }
 
-    private suspend fun Process.handlePid(context: RunContext) {
+    private fun Process.handlePid(context: RunContext) {
         val pid = try {
             pid()
         } catch (_: UnsupportedOperationException) {
@@ -71,10 +71,12 @@ class DefaultCommandRunner : CommandRunner, KoinComponent {
             "Handled process pid: $pid"
         }
 
-        context.modify(pid = pid)
+        context.launchModification {
+            modify(pid = pid)
+        }
     }
 
-    private suspend fun Process.handleStatus(context: RunContext) {
+    private fun Process.handleStatus(context: RunContext) {
         val exitCode = try {
             exitValue()
         } catch (_: IllegalThreadStateException) {
@@ -85,10 +87,12 @@ class DefaultCommandRunner : CommandRunner, KoinComponent {
             "Handled process status: $exitCode"
         }
 
-        context.modify(status = exitCode)
+        context.launchModification {
+            modify(status = exitCode)
+        }
     }
 
-    private suspend fun Process.handleOutput(context: RunContext) {
+    private fun Process.handleOutput(context: RunContext) {
         val outputText = SequenceInputStream(inputStream, errorStream)
             .bufferedReader()
             .use(BufferedReader::readText)
@@ -98,15 +102,25 @@ class DefaultCommandRunner : CommandRunner, KoinComponent {
             "Handled process output: ${outputText.length} characters"
         }
 
-        context.modify(output = outputText)
+        context.launchModification {
+            modify(output = outputText)
+        }
     }
 
-    private suspend fun handleError(context: RunContext, throwable: Throwable) {
+    private fun handleError(context: RunContext, throwable: Throwable) {
         log.e(throwable) {
             "Command failed to run"
         }
 
-        context.modify(error = throwable.message)
+        context.launchModification {
+            modify(error = throwable.message)
+        }
+    }
+
+    private fun RunContext.launchModification(block: suspend RunContext.() -> Unit) {
+        clientScope.launch {
+            block()
+        }
     }
 
     private companion object {
