@@ -6,6 +6,7 @@ import org.koin.core.component.KoinComponent
 import org.lighthousegames.logging.logging
 import java.nio.file.Files
 import java.nio.file.Paths
+import kotlin.io.path.div
 
 interface PersistentConfigService {
 
@@ -20,7 +21,19 @@ class DefaultPersistentConfigService : PersistentConfigService, KoinComponent {
         Files.createDirectories(path)
     }
 
-    private val configStore = shoebox(delreyConfigurationPath, ApplicationConfig.serializer())
+    private val configStore =
+        try {
+            initConfigStore()
+        } catch (e: RuntimeException) {
+            if (e.message?.contains("locked by") == true) {
+                val lockFilePath = delreyConfigurationPath / "shoebox.lock"
+                Files.delete(lockFilePath)
+
+                initConfigStore()
+            } else {
+                throw e
+            }
+        }
 
     private val log = logging()
 
@@ -58,6 +71,9 @@ class DefaultPersistentConfigService : PersistentConfigService, KoinComponent {
 
         return config
     }
+
+    private fun initConfigStore() =
+        shoebox(delreyConfigurationPath, ApplicationConfig.serializer())
 
     private companion object {
 
