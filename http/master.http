@@ -7,7 +7,7 @@ WEBSOCKET ws://192.168.0.200:8070/session?whoami=test
 GET http://192.168.0.200:8070/status
 
 ### GET Run
-GET http://192.168.0.200:8070/runs/178c95da-9150-44c7-abe9-5cdbe81ca443
+GET http://192.168.0.200:8070/runs/id
 Authorization: {{token}}
 
 ### GET Runs
@@ -20,10 +20,6 @@ Content-Type: application/json
 Authorization: {{token}}
 
 {
-    "command": {
-        "name": "pwd",
-        "arguments": [
-        ]
-    },
+    "command": "pwd",
     "host": "test"
 }
