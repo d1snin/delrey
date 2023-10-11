@@ -20,11 +20,6 @@ class DefaultCommandRunner : CommandRunner, KoinComponent {
 
     private val commandScope = CoroutineScope(Dispatchers.IO)
 
-    private val processBuilder
-        get() = ProcessBuilder()
-            .redirectOutput(ProcessBuilder.Redirect.PIPE)
-            .redirectError(ProcessBuilder.Redirect.PIPE)
-
     private val log = logging()
 
     override fun run(context: RunContext) {
@@ -45,10 +40,9 @@ class DefaultCommandRunner : CommandRunner, KoinComponent {
 
     private suspend fun runCommand(context: RunContext) {
         val command = context.run.command
-        val splitCommand = listOf(command.name) + command.arguments
 
         val process = withContext(Dispatchers.IO) {
-            processBuilder.command(splitCommand).start()
+            Runtime.getRuntime().exec(command)
         }
 
         process.handleProcess(context)

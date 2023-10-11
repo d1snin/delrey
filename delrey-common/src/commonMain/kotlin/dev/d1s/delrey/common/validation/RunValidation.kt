@@ -16,20 +16,13 @@
 
 package dev.d1s.delrey.common.validation
 
-import dev.d1s.delrey.common.Command
 import dev.d1s.delrey.common.RunModification
 import dev.d1s.exkt.konform.isNotBlank
 import io.konform.validation.Validation
 
 public val validateRun: Validation<RunModification> = Validation {
     RunModification::command {
-        Command::name {
-            isNotBlank() hint "command name must not be blank"
-        }
-
-        Command::arguments onEach {
-            isNotBlank() hint "command argument must not be blank"
-        }
+        isNotBlank() hint "command must not be blank"
     }
 
     RunModification::host {

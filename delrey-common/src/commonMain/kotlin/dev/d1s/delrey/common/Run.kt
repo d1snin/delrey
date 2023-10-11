@@ -20,6 +20,7 @@ import kotlinx.serialization.Serializable
 
 public typealias RunId = String
 
+public typealias Command = String
 public typealias Pid = Long
 public typealias Output = String
 public typealias ExitCode = Int
